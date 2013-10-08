@@ -1,0 +1,136 @@
+Changelog (English)
+--------------------------
+Version 0.91 Beta 1 (Mamba) 2013/01/12
+=================================
+- Commented out "Directions (cesag/mamba)
+
+Version 0.9 Final (Mamba) 2012/12/17
+=================================
+- converted to XOOPS 2.5.x Admin GUI (mamba)
+
+Version 0.83 (Marco) - 03/03/07
+=================================
+- security fix (thx Martin ZPC)
+
+Version 0.82 (Marco) - 17/02/07
+=================================
+- many security fixes, that work permitted me to improve my knowledge in that area (thx herv�)
+- Notice: Undefined variable: pentry : suppression message bug
+- add indexes on tables (read  readme file for upgrade instructions)
+- fix for mysql 5, add alias on a join instruction
+- instructions set in module preferences are now displayed on index page
+
+
+Version 0.81 (Marco) - 26/12/06
+=================================
+- add some definitions for xoopsinfo module in the xoops_version.php file
+- add chineses (thx twinwoods) and german translations (thx wuddel)
+
+Version 0.8 (Marco) - 06/09/06
+=================================
+- add 2 templates for index.php page : user centric map/ location centric map. An option in module preferences has been added, so that this module can benefit from smarty cache feature as well.The other pages of this module will have their own template later. Special thanks to kris for icons hunting ;-)
+- add parameter in module preferences to manage how many last point to display in "Last Points" area
+- add keyboard zoom featurec CTRL + "fl�ches" or CRTL + "+" ou "-"
+- add swith to admin mode from user side
+- add display of avatar in the user centric template
+- add dedicated css file, there is no need to modify manualy main css file of your xoops theme
+- add draggable marker feature on new/modification of markers
+- delete file /includes/header.php , update readme.txt file
+- fix zoom bug on "Last Points" or "Category" links - thx khuhner
+- fix zoom bug on new/modify markers (no more blank zoom field in forms on click) - thx Djiman
+
+Version 0.7g (Marco) - 21/08/06
+=================================
+- fix end tag for div and fix for directions
+
+Version 0.7f (Marco) - 20/08/06
+=================================
+- end fixes for css2 compliancy, fixed some errors on IE browser too
+- add max width per infowindow
+- add wrap feature in infowindow for too large contents
+- modify call to GoogleMap API
+
+Version 0.7e (Marco) - 09/08/06
+=================================
+- add mouseover/clickout effect
+- replacement of some residual '< b>\' tag by '\< b />\'
+- code rewriting to better use ", ' and limit bugs on some plateforms
+- residual fixes for mysql 5
+
+Version 0.7d (Marco) - 08/08/06
+=================================
+- add a check whether user has set his real name or not. if not, uname (login) will be used
+- delete all unecessary < table>, make output rendering css compliant, move some parts so that it displays well on more websites
+
+Version 0.7c (Marco) - 08/08/06
+=================================
+- remove blank ('') insert from map_id in admin.php, which was an autoincrement field (it caused an mysql "error Error Code: 0013 ERROR: Could not query the database. Error: Out of range value adjusted for column 'map_id' at row 1" on category creation), reported by khuhner
+- remove some sprintf call in admin.php
+
+Version 0.7b (Marco) - 07/08/06
+=================================
+- replace XOOPS_ROOT_PATH by XOOPS_URL in maps.js
+
+Version 0.7a (Marco) - 06/08/06
+=================================
+- quick fix just after release (typo in maps.js)
+
+Version 0.7 (Marco) - 06/08/06
+=================================
+- add tabulation feature
+- add direction feature. You can search your direction from current marker position
+- add some icones to personalize tabs, add names to tabs (Profile/Directions)
+- add link to user side from admin side
+- change call to GMap to GMap2 class to improve API compatibility and speed display
+- delete call to GPoint2 function, and implement direct call to GLatLng. This will help memory leak.
+- change submitter field (table gmap_points) type from int(4) to mediumint(8) to improve query performance, and align content definition with core field definition (uid field from xoops_users table). To upgrade from 0.6, you have to uninstall your module, or change this field definition directly in you database (via phpmyadmin for example)
+- upgrade module compatibility with last version of API (2.59), to benefit from new features and speed improvements
+- add Continous Zoom and DoubleClickZoom features
+
+
+Version 0.6 (Marco) - 05/08/06
+=================================
+- replace '< ?' by '< ?php' tags (still left some in maps.js, i keep that one for later)
+- add some css style into markers to better display informations within markers (still need to create a module .css file,i keep that one for later)
+To use it, just add to your theme .css such a style (names infobox)
+.infobox {font-size:10px;}
+
+- change category display area
+- add overview map feature, add correlative settings in module preferences (overview map position)
+
+
+Version 0.5 (Marco)
+=================================
+- Added ability for users to add/modify their point by themselves (managepoint.php file). user's should be connected to perform that action
+- Added some language defines
+- Added "one point only per users" control
+- Added diplay of user's profile info into marker, and link to xoops's profile
+- Fix some translation issues for defines in Admin side
+- Added some settings in Module Preferences for map size (height/width)
+
+
+Version 0.4 (Phatbloke)
+=================================
+-Added code to handle V2 of the google API making europe maps available
+-Added ability to choose a map type to display as default
+-Fixed Shifted sidebar to the side of the map to help if categories get too big
+
+
+Version 0.3 (Phatbloke)
+=================================
+-Added dynamic menu system for categories
+-Added first category as default display
+-Added ordering for points
+-Fixed some language issues
+-Fixed up admin area templates
+-Fixed polyline displaying
+
+
+Version 0.2 (Phatbloke)
+=================================
+-Fixed issue with IE
+
+
+Version 0.1 (Phatbloke)
+=================================
+-First release
