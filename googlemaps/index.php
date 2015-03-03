@@ -26,23 +26,21 @@ include "../../mainfile.php";
 
 global $xoopsModuleConfig, $xoopsModule;
 
-
 if($xoopsModuleConfig['displaytype']=='userprofile') {
-	$xoopsOption['template_main'] = 'googlemaps_index_userprofile.html';
+    $xoopsOption['template_main'] = 'googlemaps_index_userprofile.html';
 } else {
-	$xoopsOption['template_main'] = 'googlemaps_index_location.html';
+    $xoopsOption['template_main'] = 'googlemaps_index_location.html';
 }
-
 
 include XOOPS_ROOT_PATH."/header.php";
 
-// If you want to show polylines on your map (like the lines used by Google Maps to show driving directions), 
-//you need to include the VML namespace and some CSS code in your XHTML document to make everything work properly in IE. 
+// If you want to show polylines on your map (like the lines used by Google Maps to show driving directions),
+//you need to include the VML namespace and some CSS code in your XHTML document to make everything work properly in IE.
 // The beginning of your XHTML document should look something like this:
 // see here for details  http://www.google.com/apis/maps/documentation/#XHTML_and_VML
 // i will move that part to a better place in near future
 
-// 
+//
 //include "includes/header.php";
 
 $xoopsTpl->assign("xoops_module_header", '<link rel="stylesheet" type="text/css" href="' . XOOPS_URL . '/modules/' . $xoopsModule->getVar('dirname') .'/googlemaps.css" />' .
@@ -51,7 +49,6 @@ $xoopsTpl->assign("xoops_module_header", '<link rel="stylesheet" type="text/css"
 	  behavior:url(#default#VML);
 	}
 	</style>');
-
 
 $xoopsTpl->assign("adminpage", "<a href='" . XOOPS_URL . "/modules/" . $xoopsModule->getVar('dirname')."/admin/index.php'>" ._MD_GMAPS_GOTOADMIN . "</a>");
 
@@ -72,8 +69,7 @@ $pentry[$i]['map_id'] = intval($array['map_id']);
 $pentry[$i]['lat_id1'] = floatval($array['lat']);
 $pentry[$i]['lon_id1'] = floatval($array['lon']);
 $i++;
-}  
-
+}
 
 //store polyline end point in an array
 $i = 0;
@@ -81,7 +77,7 @@ while ($array = $xoopsDB->fetchArray($sql4)) {
 $pentry[$i]['lat_id2'] = floatval($array['lat']);
 $pentry[$i]['lon_id2'] = floatval($array['lon']);
 $i++;
-} 
+}
 $xoopsTpl->assign('poly',$pentry);
 
 //catch points coordinates,and user's info
@@ -113,10 +109,8 @@ $mentry[$i]['nom'] = $myts->htmlSpecialChars($array['name']);
 $mentry[$i]['promo'] = $myts->htmlSpecialChars($array['user_occ']);
 
 $i++;
-}  
+}
 $xoopsTpl->assign('point',$mentry);
-
-
 
 //catch categories coordinates
 $sql2 = $xoopsDB->query("SELECT * FROM ".$xoopsDB->prefix("gmap_category")." ORDER BY 'order' ASC ");
@@ -131,14 +125,12 @@ $i++;
 }
 $xoopsTpl->assign('category',$centry);
 
-
-
 // catch some infos for diplay map
 
 if (is_object($xoopsUser)) {
-$xoopsTpl->assign('isuser',true); 
+$xoopsTpl->assign('isuser',true);
 } else {
-$xoopsTpl->assign('isuser',false); 
+$xoopsTpl->assign('isuser',false);
 }
 
 $xoopsTpl->assign('map_type',$xoopsModuleConfig['map_type']);
@@ -153,7 +145,5 @@ $xoopsTpl->assign('header',$xoopsModuleConfig['header']);
 
 include_once XOOPS_ROOT_PATH.'/footer.php';
 
-
-
 //include "includes/maps.js";
-?>
+;

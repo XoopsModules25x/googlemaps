@@ -4,10 +4,10 @@
 //
 include('../../../include/cp_header.php');
 if(
-	(!defined('XOOPS_ROOT_PATH')) || 
-	(!is_object($xoopsUser)) || 
-	(!$xoopsUser->isAdmin()) ){
-	exit();
+    (!defined('XOOPS_ROOT_PATH')) ||
+    (!is_object($xoopsUser)) ||
+    (!$xoopsUser->isAdmin()) ){
+    exit();
 }
 //    MODULE/admin/ins_table.php?sqlfilename=$filename
 
@@ -27,7 +27,7 @@ if (!file_exists($sql_file_path)) {
     print "SQL file not found at <b>$sql_file_path</b>";
     exit (1);
 } else {
-	$sql='';
+    $sql='';
     print "SQL file found at <b>$sql_file_path</b>.<br  /> adjusting data...";
     include_once XOOPS_ROOT_PATH.'/class/database/sqlutility.php';
     $sql_query = fread(fopen($sql_file_path, 'r'), filesize($sql_file_path));
@@ -59,5 +59,3 @@ if (!file_exists($sql_file_path)) {
     }
     redirect_header( XOOPS_URL."/modules/".$dirname."/",3, "Data transportation Successful");
 }
-
-?>
