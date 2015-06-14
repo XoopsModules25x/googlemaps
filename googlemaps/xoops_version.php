@@ -1,11 +1,10 @@
 <?php
 /************************************************************************/
- # Google Maps                  							# 
+ # Google Maps                  							#
  #                                                                  	#
- # Created by  Phatbloke (phatbloke@world-net.co.nz) 	
+ # Created by  Phatbloke (phatbloke@world-net.co.nz)
  # improved and empowered by Marco (mdxprod.com)
 /************************************************************************/
-
 
 $modversion['name'] = _MI_GMAPS_NAME;
 $modversion['version'] = 0.91;
@@ -41,7 +40,6 @@ $modversion['sqlfile']['mysql'] = "sql/mysql.sql";
 $modversion['tables'][0] = "gmap_pl";
 $modversion['tables'][1] = "gmap_category";
 $modversion['tables'][2] = "gmap_points";
-
 
 // Admin things
 $modversion['hasAdmin'] = 1;
@@ -151,6 +149,3 @@ $modversion['config'][11]['description'] = '_MI_GMAPS_HEADERDSC';
 $modversion['config'][11]['formtype'] = 'textarea';
 $modversion['config'][11]['valuetype'] = 'text';
 $modversion['config'][11]['default'] =  _MI_INSTRUCTIONS ;
-
-
-?>

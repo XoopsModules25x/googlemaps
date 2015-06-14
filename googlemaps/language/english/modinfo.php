@@ -12,7 +12,6 @@ define("_MI_GMAPS_DESC","Creates a world map from google where users can add in 
 define("_MI_GMAPS_BNAME1","");
 define("_MI_GMAPS_BNAME2","");
 
-
 // Names of admin menu items
 define("_MI_GMAPS_ADMENU1","Map Index");
 define("_MI_GMAPS_ADMENU2","Add Categories");

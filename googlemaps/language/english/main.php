@@ -19,14 +19,10 @@ define("_MD_INSTRUCTIONS","- You have to log-in first to create, modify your loc
 
 define("_MD_INSTRUCTIONS2","- Click beside to create, modify your location points");
 
-
 define("_MD_CATHEADER","Categories");
 define("_MD_POINTHEADER","Last Points");
 define("_MD_CATEGORYC","Category: ");
 define("_MD_ZOOMEDOUT","Zoomed Out View");
-
-
-
 
 //%%%%%%	Module Name 'googlemaps' (Admin)	  %%%%%
 
