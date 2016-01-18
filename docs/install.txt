@@ -1,0 +1,15 @@
+INSTALL/UNISTALL
+=================
+
+No special measures necessary, follow the standard installation process & extract the module folder into the ../modules directory. Install the module through Admin -> System Module -> Modules.
+
+-  Configure module in prefs
+-  Obtain an api for your site from google. Link is given in the config page.
+-  Add your categories and points from the module menu (to make the module work, you will have to create one category at least)
+
+**Warning** : your theme has to be correctly compliant with w3c standards to display well large contents. Combined with the fact that IE asks for strict compliant code (in this case ! lol) , some display errors on IE for large contents have been noticed with some non-compliant themes (no increase of length's infowindow). Example : make use of unique id, as stated in w3c rules. If not, replace them by css classes !
+
+============
+
+
+Detailed instructions on installing modules are available in the XOOPS Operations Manual: http://goo.gl/adT2i
