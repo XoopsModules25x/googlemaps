@@ -1,5 +1,0 @@
-Originally developed by phatbloke.
-
-Several improvements done by Marco.
-
-Converted to XOOPS 2.5.x Admin GUI by Mamba.
