@@ -21,18 +21,25 @@
 #   ------------------------------------------------------------------------  #
 ###############################################################################
 include '../../../include/cp_header.php';
-if ( file_exists("../language/".$xoopsConfig['language']."/main.php") ) {
-    include "../language/".$xoopsConfig['language']."/main.php";
-} else {
-    include "../language/english/main.php";
+if (file_exists("../language/".$xoopsConfig['language']."/main.php") ) {
+    include_once "../language/".$xoopsConfig['language']."/main.php";
+}else{
+    include_once "../language/english/main.php";
 }
 //include '../include/functions.php';
 include_once XOOPS_ROOT_PATH.'/class/xoopstree.php';
 include_once XOOPS_ROOT_PATH."/class/xoopslists.php";
 include_once XOOPS_ROOT_PATH."/include/xoopscodes.php";
 include_once XOOPS_ROOT_PATH.'/class/module.errorhandler.php';
-$myts =& MyTextSanitizer::getInstance();
-$eh = new ErrorHandler;
+include XOOPS_ROOT_PATH."/class/xoopsformloader.php";
+
+/*TODO:
+    * Look into form issue. missing .js
+
+*/
+
+$myts = MyTextSanitizer::getInstance();
+$eh = new ErrorHandler; //TODO: DEPRECATED
 
 // Display the main contents
 
@@ -44,64 +51,95 @@ function main()
     xoops_cp_footer();
 }
 
-// Add in a new category
+function insertgscript($options)
+{
+    $lng = 0;
+    $lat = 0;
+    $zoom = 1;
 
+    if($options['lng']){
+        $lng =$options['lng'];
+    }
+
+    if($options['lat']){
+        $lat = $options['lat'];
+    }
+
+    if($options['zoom']){
+        $zoom = $options['zoom'];
+    }
+
+    echo"<script type=\"text/javascript\">\n";
+    echo"//&lt;![CDATA[ \n";
+    echo "var map;
+
+    function initialize() {
+        var myLatLng = new google.maps.LatLng({lat: ".$lat.", lng: ".$lng."});
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: myLatLng,
+        zoom: ".$zoom."
+    });
+    
+    marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map
+    });
+
+    putMarker(myLatLng);
+    google.maps.event.addListener(map, 'click', function(event) {
+        putMarker(event.latLng);
+        });
+    }
+
+    function putMarker(location) {
+    if (marker) {
+            marker.setPosition(location);
+            map.setCenter(location);
+    } else {
+        marker = new google.maps.Marker({
+        center:location,
+        map: map
+        });
+    }
+    if(location){      
+        document.getElementById(\"lat\").value = location.lat();
+        document.getElementById(\"lon\").value = location.lng();
+        document.getElementById(\"zoom\").value = map.getZoom();
+    }
+    }";
+    // arrange for our onload handler to 'listen' for onload events\n"
+    echo"if (window.attachEvent) {\n";
+    echo"window.attachEvent(\"onload\", function() {\n";
+    echo"initialize();	// Internet Explorer\n";
+    echo"});\n";
+    echo"} else {\n";
+    echo "google.maps.event.addDomListener(window, 'load', initialize);";
+    echo "};\n";
+    echo"//]]&gt;\n";
+    echo"</script >\n";
+}
+
+// Add in a new category
 function catAdd()
 {
     global $xoopsDB, $xoopsModule, $xoopsModuleConfig;
     xoops_cp_header();
-
     //Display the map
-    echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
-    echo"<script type=\"text/javascript\">\n";
-    echo"//&lt;![CDATA[ \n";
-    echo"function loadMap(){\n";
-    //echo"function GPoint2(x,y) { return new GLatLng(y,x); }\n";
-    echo"var map = new GMap2(document.getElementById(\"map\"));\n";
-    echo"map.setCenter(new GLatLng(0, 0), 1);\n";
-    echo"map.addControl(new GLargeMapControl());\n";
-    echo"map.addControl(new GMapTypeControl());\n";
-    echo"GEvent.addListener(map, \"click\", function(overlay, point){\n";
-    echo"map.clearOverlays();\n";
-    //echo"GEvent.addListener(map, 'zoomend', function() {\n";
-    echo"document.getElementById(\"zoom\").value = map.getZoom();\n";
-    //echo"});\n";
-    echo"if (point) {\n";
-    echo"map.addOverlay(new GMarker(point,{draggable:true}));\n";
-    echo"map.panTo(point);\n";
-    echo"lat = point.y;\n";
-    echo"lon = point.x;\n";
-    echo"document.getElementById(\"lat\").value = lat;\n";
-    echo"document.getElementById(\"lon\").value = lon;\n";
-    echo"}\n";
-    echo"});\n";
-    echo"}\n";
-    echo"// arrange for our onload handler to 'listen' for onload events\n";
-    echo"if (window.attachEvent) {\n";
-    echo"window.attachEvent(\"onload\", function() {\n";
-    echo"loadMap();	// Internet Explorer\n";
-    echo"});\n";
-    echo"} else {\n";
-    echo"window.addEventListener(\"load\", function() {\n";
-    echo"loadMap(); // Firefox and standard browsers\n";
-    echo"}, false);\n";
-    echo"}\n";
-    echo"//]]&gt;\n";
-    echo"</script >\n";
-
-    echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_ADDNEWCAT."</th></tr>";
-        echo "<form method=post action=main.php>\n";
-        echo "<tr valign='top' align='center'><td class='head' colspan='2'><div id='map' style='height: 400px'></div ></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_CAT."</td>";
-        echo "<td class='even'><input type=text name=title size=50 maxlength=100></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_CATLONGITUDE."</td>";
-        echo "<td class='even'><input id=lon type=text name=lon size=50 maxlength=250></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_CATLATITUDE."</td>";
-        echo "<td class='even'><input id=lat type=text name=lat size=50 maxlength=250></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_ZOOM."</td>";
-        echo "<td class='even'><input id=zoom type=text name=zoom size=50 maxlength=250></td></tr>";
-    echo  "<input type=\"hidden\" name=\"op\" value=\"catInsert\"></input>";
-    echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_ADD."' accesskey=\"s\" /></form></td></tr></table>";
+    echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script>\n";
+    insertgscript(array(lng=>0,lat=>0,zoom=>1));
+    $form = new XoopsThemeForm(_MD_ADDNEWCAT,'form', 'main.php');
+    $gmap = new XoopsFormLabel('', "<div id='map' style='height: 400px'></div >");
+    $gmap->setNocolspan(true);
+    $form->addElement($gmap);
+    $form->addElement(new XoopsFormText(_MD_CAT,'title',50,100));
+    $form->addElement(new XoopsFormText(_MD_CATLONGITUDE,'lon',50,250));
+    $form->addElement(new XoopsFormText(_MD_CATLATITUDE,'lat',50,250));
+    $form->addElement(new XoopsFormText(_MD_ZOOM,'zoom',50, 250));
+    $form->addElement(new XoopsFormHidden('op','catInsert'));
+    $form->addElement(new XoopsFormButton('', 'post', _MD_ADD, 'submit'));
+    //->setExtra('accesskey="s\"');
+    $form->render();
+    echo $form->display();
     xoops_cp_footer();
 }
 
@@ -110,13 +148,13 @@ function catAdd()
 function catInsert()
 {
     global $xoopsConfig, $xoopsDB, $myts, $xoopsUser, $xoopsModule, $eh;
-    $title = $myts->makeTboxData4Save($_POST["title"]);
-    $lat = $myts->makeTboxData4Save($_POST["lat"]);
-    $lon = $myts->makeTboxData4Save($_POST["lon"]);
-    $zoom = $myts->makeTboxData4Save($_POST["zoom"]);
+    $title = $myts->htmlSpecialChars($_POST["title"]);
+    $lat = $myts->htmlSpecialChars($_POST["lat"]);
+    $lon = $myts->htmlSpecialChars($_POST["lon"]);
+    $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
     $errormsg = '';
     // Check if Title exist
-    if ( $title == "" ) {
+    if($title == "") {
         $errormsg .= "<h4 style='color: #ff0000'>";
         $errormsg .= _MD_ERRORTITLE."</h4>";
             $error =1;
@@ -132,47 +170,44 @@ function catInsert()
     //$sql = "INSERT INTO ".$xoopsDB->prefix("gmap_category")." ( `map_id` , `lat` , `lon` , `name` , `zoom` ,`active` , `order`) VALUES ('', '$lat', '$lon', '$title', $zoom, '1', '$order')";
     $sql = "INSERT INTO ".$xoopsDB->prefix("gmap_category")." ( `lat` , `lon` , `name` , `zoom` ,`active` , `order`) VALUES ('$lat', '$lon', '$title', $zoom, '1', '$order')";
     $xoopsDB->query($sql) or $eh->show("0013");
-    if ( $newid == 0 ) {
+    if($newid == 0) {
         $newid = $xoopsDB->getInsertId();
     }
-        redirect_header("main.php?op=catMod",1,_MD_NEWCATADDED);
+    redirect_header("main.php?op=catMod",1,_MD_NEWCATADDED);
 }
 
 //Modify a category select page to choose which cat to mod
 
 function catMod()
 {
-    
     global $xoopsDB;
     $result2 = $xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_category")."");
     list($numrows2) = $xoopsDB->fetchRow($result2);
     if ( $numrows2 > 0 ) {
         $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
-    $i = 0;
+        $i = 0;
         while ($array = $xoopsDB->fetchArray($result1)) {
         $entry[$i]['map_id']   = $array['map_id'];
         $entry[$i]['name']   = $array['name'];
         $i++;
-    }
-    xoops_cp_header();
-    echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_MODCAT."</th></tr>";
-        echo "<form method=get action=\"main.php\">\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_CATID."</td>";
-    echo "<td class='even'><select size='1' name='lid'>";
-    echo "<option value=' '>------</option>";
-    $count_msg = count($entry);
-    for ( $i = 0; $i < $count_msg; $i++ ) {
-        echo "<option value='".$entry[$i]['map_id']."'>".$entry[$i]['name']."</option>";
-    }
-    echo "</select></td></tr>";
-    echo "<input type=hidden name=fct value=mypoints>\n";
-    echo "<input type=hidden name=op value=modCat><br /><br />\n";
-    echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form></td></tr></table>";
-    xoops_cp_footer();
+        }
+        xoops_cp_header();
+        $form = new XoopsThemeForm(_MD_MODCAT,'','main.php','GET');
+        $select = new XoopsFormSelect(_MD_CATID,'lid');
+        $count_msg = count($entry);
+        for ( $i = 0; $i < $count_msg; $i++ ) {
+            $select->addOption($entry[$i]['map_id'],$entry[$i]['name']);
+        }
+        $form->addElement($select);
+        //$form->addElement(new XoopsFormHidden('fct','mypoints'));//??
+        $form->addElement(new XoopsFormHidden('op','modCat'));
+        $form->addElement(new XoopsFormButton('','',_MD_MODIFY,'submit'));
+        $form->render();
+        echo $form->display();
+        xoops_cp_footer();
     }else{
          redirect_header("index.php",1,_MD_NOCATS);
     }
-     
 }
 
 //Modify the selected category
@@ -180,7 +215,7 @@ function catMod()
 function modCat()
 {
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig;
-    $lid = $_GET['lid'];
+    $lid = intval($_GET['lid']);
     $result = $xoopsDB->query("select map_id, lat, lon, zoom, name from ".$xoopsDB->prefix("gmap_category")." where map_id=$lid") or $eh->show("0013");
     list($map_id, $lat, $lon, $zoom, $name) = $xoopsDB->fetchRow($result);
     $name = $myts->makeTboxData4Edit($name);
@@ -188,77 +223,51 @@ function modCat()
     $lon = $myts->makeTboxData4Edit($lon);
     $zoom = $myts->makeTboxData4Edit($zoom);
     xoops_cp_header();
-
     //Display the map
-
-    echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
-    echo"<script type=\"text/javascript\">\n";
-    echo"//&lt;![CDATA[ \n";
-    echo"function loadMap(){\n";
-    //echo"function GPoint2(x,y) { return new GLatLng(y,x); }\n";
-    echo"var map = new GMap2(document.getElementById(\"map\"));\n";
-    echo"map.addControl(new GLargeMapControl());\n";
-    echo"map.addControl(new GMapTypeControl());\n";
-    echo"map.setCenter(new GLatLng(".$lat.",".$lon."), ".$zoom.");\n";
-    echo"map.addOverlay(new GMarker(new GLatLng(".$lat.",".$lon."),{draggable:true}));\n";
-    echo"GEvent.addListener(map, \"click\", function(overlay, point){\n";
-    echo"map.clearOverlays();\n";
-    //echo"GEvent.addListener(map, 'zoomend', function() {\n";
-    echo"document.getElementById(\"zoom\").value = map.getZoom();\n";
-    //echo"});\n";
-    echo"if (point) {\n";
-    echo"map.addOverlay(new GMarker(point));\n";
-    echo"map.panTo(point);\n";
-    echo"lat = point.y;\n";
-    echo"lon = point.x;\n";
-    echo"document.getElementById(\"lat\").value = lat;\n";
-    echo"document.getElementById(\"lon\").value = lon;\n";
-    echo"}\n";
-    echo"});\n";
-    echo"}\n";
-    echo"// arrange for our onload handler to 'listen' for onload events\n";
-    echo"if (window.attachEvent) {\n";
-    echo"window.attachEvent(\"onload\", function() {\n";
-    echo"loadMap();	// Internet Explorer\n";
-    echo"});\n";
-    echo"} else {\n";
-    echo"window.addEventListener(\"load\", function() {\n";
-    echo"loadMap(); // Firefox and standard browsers\n";
-    echo"}, false);\n";
-    echo"}\n";
-    echo"//]]&gt;\n";
-    echo"</script >\n";
-
-    echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_MODCAT."</th></tr>";
-        echo "<form method=post action=\"main.php\">\n";
-    echo "<tr valign='top' align='center'><td class='head' colspan='2'><div id='map' style='height: 400px'></div ></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_CAT."</td>";
-    echo "<td class='even'><input type=text name=name value=\"$name\" size=50 maxlength=100></input></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_LONGITUDE."</td>";
-    echo "<td class='even'><input type=text id=lon name=lon value=\"$lon\" size=50 maxlength=100></input></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_LATITUDE."</td>";
-    echo "<td class='even'><input type=text id=lat name=lat value=\"$lat\" size=50 maxlength=100></input></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_ZOOM."</td>";
-    echo "<td class='even'><input type=text name=zoom id=zoom value=\"$zoom\" size=50 maxlength=100></input></td></tr>\n";
-    echo "<input type=hidden name=lid value=$map_id></input>\n";
-    echo "<input type=hidden name=op value=modCatS>\n";
-    echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><table><tr><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form></td>";
-    echo "<td class='even'>".myTextForm("main.php?op=delCat&lid=".$lid , _MD_DELETE)."</td>";
-    echo "<td class='even'>".myTextForm("main.php?op=catMod", _MD_CANCEL)."</td>";
-    echo "</tr></table></td></tr></table>";
-        xoops_cp_footer();
+    echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script>\n";
+    insertgscript(array(lng=>$lon,lat=>$lat,zoom=>$zoom));
+    $form = new XoopsThemeForm(_MD_MODCAT,'form', 'main.php');
+    $gmap = new XoopsFormLabel('', "<div id='map' style='height: 400px'></div >");
+    $gmap->setNocolspan(true);
+    $form->addElement($gmap);
+    $form->addElement(new XoopsFormText(_MD_CAT,'name',50,100,$name));
+    $form->addElement(new XoopsFormText(_MD_CATLONGITUDE,'lon',50,250));
+    $form->addElement(new XoopsFormText(_MD_CATLATITUDE,'lat',50,250));
+    $form->addElement(new XoopsFormText(_MD_ZOOM,'zoom',50,250));
+    $form->addElement(new XoopsFormHidden('op','modCatS'));
+    $form->addElement(new XoopsFormHidden('lid',$lid));
+    $modify = new XoopsFormButton('','modify',_MD_MODIFY,'submit');
+    $delete = new XoopsFormButton('','delete',_MD_DELETE,'submit');
+    $cancel = new XoopsFormButton('','cancel',_MD_CANCEL,'button');//This one will only be a button. no need to POST.
+    $cancel->setExtra('onclick="location.href=\'main.php?op=catMod\'"');
+    $tray = new XoopsFormElementTray();
+    $tray->addElement($modify);
+    $tray->addElement($delete);
+    $tray->addElement($cancel);
+    $form->addElement($tray);
+    $form->render();
+    echo $form->display();
+    xoops_cp_footer();
 }
 
 // Insert the modified category into the DB
 function modCatS()
 {
     global $xoopsDB, $myts, $eh;
-        $name = $myts->makeTboxData4Save($_POST["name"]);
-        $lat = $myts->makeTboxData4Save($_POST["lat"]);
-        $lon = $myts->makeTboxData4Save($_POST["lon"]);
-        $zoom = $myts->makeTboxData4Save($_POST["zoom"]);
-        $xoopsDB->query("update ".$xoopsDB->prefix("gmap_category")." set name='$name', lat='$lat', lon='$lon',zoom='$zoom'where map_id=".$_POST['lid']."")  or $eh->show("0013");
+    if(isset($_POST['modify'])){
+        $name = $myts->htmlSpecialChars($_POST["name"]);
+        $lat = $myts->htmlSpecialChars($_POST["lat"]);
+        $lon = $myts->htmlSpecialChars($_POST["lon"]);
+        $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
+        $lid = intval($_POST['lid']);
+        $xoopsDB->query("update ".$xoopsDB->prefix("gmap_category")." set name='$name', lat='$lat', lon='$lon',zoom='$zoom'where map_id=".$lid."")  or $eh->show("0013");
         redirect_header("index.php",1,_MD_DBUPDATED);
+    }elseif(isset($_POST['delete'])){
+        delCat();
+    }else{
+        //TODO: ERROR MSG
+        redirect_header("index.php",1,"error message");
+    }
     exit();
 }
 
@@ -269,77 +278,30 @@ function pointAdd()
     $result2 = $xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_category")."");
     list($numrows2) = $xoopsDB->fetchRow($result2);
     if ( $numrows2 > 0 ) {
-        $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
-            $i = 0;
-        while ($array = $xoopsDB->fetchArray($result1)) {
-            $entry[$i]['map_id']   = $array['map_id'];
-            $entry[$i]['name']   = $array['name'];
-            $i++;
-        }
+        $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");//TODO:sort
         xoops_cp_header();
-        echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
-        echo"<script type=\"text/javascript\">\n";
-        echo"//&lt;![CDATA[ \n";
-        echo"function loadMap(){\n";
-        //echo"function GPoint2(x,y) { return new GLatLng(y,x); }\n";
-        echo"var map = new GMap2(document.getElementById(\"map\"));\n";
-        echo"map.addControl(new GLargeMapControl());\n";
-        echo"map.addControl(new GMapTypeControl());\n";
-        echo"map.setCenter(new GLatLng(0, 0), 1);\n";
-        echo"GEvent.addListener(map, \"click\", function(overlay, point){\n";
-        echo"map.clearOverlays();\n";
-        //echo"GEvent.addListener(map, 'zoomend', function() {\n";
-        echo"document.getElementById(\"zoom\").value = map.getZoom();\n";
-        //echo"});\n";
-        echo"if (point) {\n";
-        echo"map.addOverlay(new GMarker(point,{draggable:true}));\n";
-        echo"map.panTo(point);\n";
-        echo"lat = point.y;\n";
-        echo"lon = point.x;\n";
-        echo"document.getElementById(\"lat\").value = lat;\n";
-        echo"document.getElementById(\"lon\").value = lon;\n";
-        echo"}\n";
-        echo"});\n";
-        echo"}\n";
-        echo"// arrange for our onload handler to 'listen' for onload events\n";
-        echo"if (window.attachEvent) {\n";
-        echo"window.attachEvent(\"onload\", function() {\n";
-        echo"loadMap();	// Internet Explorer\n";
-        echo"});\n";
-        echo"} else {\n";
-        echo"window.addEventListener(\"load\", function() {\n";
-        echo"loadMap(); // Firefox and standard browsers\n";
-        echo"}, false);\n";
-        echo"}\n";
-        echo"//]]&gt;\n";
-        echo"</script >\n";
-
-        echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_ADDNEWPOINT."</th></tr>";
-            echo "<form method=post action=\"main.php\">\n";
-        echo "<tr valign='top' align='center'><td class='head' colspan='2'><div id='map' style='height: 400px'></div ></td></tr>";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_LOCATION."</td>";
-        echo "<td class='even'><input type=text name=title size=50 maxlength=100></td><tr>\n";
-
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_LONGITUDE."</td>";
-            echo "<td class='even'><input id=lon type=text name=lon size=50 maxlength=250></td><tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_LATITUDE."</td>";
-            echo "<td class='even'><input id=lat type=text name=lat size=50 maxlength=250></td><tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_ZOOM."</td>";
-            echo "<td class='even'><input id=zoom type=text name=zoom size=50 maxlength=250></td><tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_CATEGORYC."</td>";
-            echo "<td class='even'><select size='1' name='category'>";
-        $count_msg = count($entry);
-        for ( $i = 0; $i < $count_msg; $i++ ) {
-            echo "<option value='".$entry[$i]['map_id']."'>".$entry[$i]['name']."</option>";
+        //Display the map
+        echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script>\n";
+        insertgscript(array(lng=>0,lat=>0,zoom=>1));
+        $form = new XoopsThemeForm(_MD_ADDNEWPOINT,'form', 'main.php');
+        $gmap = new XoopsFormLabel('', "<div id='map' style='height: 400px'></div >");
+        $gmap->setNocolspan(true);
+        $form->addElement($gmap);
+        $form->addElement(new XoopsFormText(_MD_LOCATION,'title',50,100));
+        $form->addElement(new XoopsFormText(_MD_LONGITUDE,'lon',50,250));
+        $form->addElement(new XoopsFormText(_MD_LATITUDE,'lat',50,250));
+        $form->addElement(new XoopsFormText(_MD_ZOOM,'zoom',50, 250));     
+        $catselect = new XoopsFormSelect(_MD_CATEGORYC,'category');
+        while ($array = $xoopsDB->fetchArray($result1)) {
+            $catselect->addOption($array['map_id'],$array['name']);
         }
-        echo "</select></td></tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_DESCRIPTIONC."</td>";
-        echo "<td class='even'>";
-        xoopsCodeTarea("description",60,8);
-        xoopsSmilies("description");
-            echo "</td></tr>\n";
-        echo "<input type=\"hidden\" name=\"op\" value=\"pointInsert\"></input>\n";
-        echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_ADD."' accesskey=\"s\" /></form></td></tr></table>";
+        $form->addElement($catselect);
+        $form->addElement(new XoopsFormDhtmlTextArea(_MD_DESCRIPTIONC,'description',null,60,8));
+        $form->addElement(new XoopsFormHidden('op','pointInsert'));
+        $form->addElement(new XoopsFormButton('', 'post', _MD_ADD, 'submit'));
+        //->setExtra('accesskey="s\"');
+        $form->render();
+        echo $form->display();
         xoops_cp_footer();
     }else{
         redirect_header("main.php?op=catAdd",1,_MD_NOCATSADD);
@@ -350,11 +312,11 @@ function pointAdd()
 function pointInsert()
 {
     global $xoopsConfig, $xoopsDB, $myts, $xoopsUser, $xoopsModule, $eh;
-    $title = $myts->makeTboxData4Save($_POST["title"]);
-    $lat = $myts->makeTboxData4Save($_POST["lat"]);
-    $lon = $myts->makeTboxData4Save($_POST["lon"]);
-    $zoom = $myts->makeTboxData4Save($_POST["zoom"]);
-    $category = $myts->makeTboxData4Save($_POST["category"]);
+    $title = $myts->htmlSpecialChars($_POST["title"]);
+    $lat = $myts->htmlSpecialChars($_POST["lat"]);
+    $lon = $myts->htmlSpecialChars($_POST["lon"]);
+    $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
+    $category = $myts->htmlSpecialChars($_POST["category"]);
     $description = $myts->makeTareaData4Save($_POST["description"]);
     $submitter = $xoopsUser->uid();
     $date = time();
@@ -392,7 +354,6 @@ function pointInsert()
 
 function pointMod()
 {
-    
         global $xoopsDB;
         $result2 = $xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_points")."");
         list($numrows2) = $xoopsDB->fetchRow($result2);
@@ -405,24 +366,34 @@ function pointMod()
             $i++;
         }
         xoops_cp_header();
-        echo "<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_MODPOINT."</th></tr>";
-        echo "<form method=get action=\"main.php\">\n";
-            echo "<tr valign='top' align='left'><td class='head'>"._MD_POINTID."</td>";
-        echo "<td class='even'><select size='1' name='lid'>";
-        echo "<option value=' '>------</option>";
+        /*$form = new XoopsThemeForm(_MD_MODPOINT,'','main.php');
+        $select = new XoopsFormSelect(_MD_POINTID,'lid');
         $count_msg = count($entry);
         for ( $i = 0; $i < $count_msg; $i++ ) {
-            echo "<option value='".$entry[$i]['id']."'>".$entry[$i]['title']."</option>";
+            $select->addOption($entry[$i]['id'],$entry[$i]['title']);
         }
-        echo "</select></td></tr>\n";
-        echo "<input type=hidden name=fct value=mypoints>\n";
-        echo "<input type=hidden name=op value=modPoint><br /><br />\n";
-        echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form></td></tr></table>";
+        $form->addElement($select);
+        $form->addElement(new XoopsFormHidden('fct','mypoints'));
+        $form->addElement(new XoopsFormHidden('op','modPoint'));
+        $form->addElement(new XoopsFormButton('','post',_MD_MODIFY,'submit'));*/
+
+        //prefer GET/
+        $form = new XoopsThemeForm(_MD_MODPOINT,'','main.php','get');
+        $select = new XoopsFormSelect(_MD_POINTID,'lid');
+        $count_msg = count($entry);
+        for ( $i = 0; $i < $count_msg; $i++ ) {
+            $select->addOption($entry[$i]['id'],$entry[$i]['title']);
+        }
+        $form->addElement($select);
+        $form->addElement(new XoopsFormHidden('fct','mypoints'));
+        $form->addElement(new XoopsFormHidden('op','modPoint'));
+        $form->addElement(new XoopsFormButton('','',_MD_MODIFY,'submit'));
+        $form->render();
+        echo $form->display();
         xoops_cp_footer();
     }else{
         redirect_header("index.php",1,_MD_NOPOINTS);
-         }
-     
+    }
 }
 
 //Modify the point
@@ -430,7 +401,8 @@ function pointMod()
 function modPoint()
 {
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig;
-    $lid = $_GET['lid'];
+    $lid = intval($_GET['lid']);
+    //TODO:ERR
     $result = $xoopsDB->query("select id, lat, lon, zoom, map_id, title, html from ".$xoopsDB->prefix("gmap_points")." where id=$lid") or $eh->show("0013");
     list($id, $lat, $lon, $zoom, $map_id, $title, $html) = $xoopsDB->fetchRow($result);
     $title = $myts->makeTboxData4Edit($title);
@@ -439,8 +411,8 @@ function modPoint()
     $zoom = $myts->makeTboxData4Edit($zoom);
     $map_id = $myts->makeTboxData4Edit($map_id);
     $GLOBALS['html'] = $myts->makeTareaData4Edit($html);
-    $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
-        $i = 0;
+    $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");//TODO:ERR
+    $i = 0;
     while ($array = $xoopsDB->fetchArray($result1)) {
         $entry[$i]['map_id']   = $array['map_id'];
         $entry[$i]['name']   = $array['name'];
@@ -449,81 +421,39 @@ function modPoint()
     xoops_cp_header();
 
     //Display Map
-
-    echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
-    echo"<script type=\"text/javascript\">\n";
-    echo"//&lt;![CDATA[ \n";
-    echo"function loadMap(){\n";
-    //echo"function GPoint2(x,y) { return new GLatLng(y,x); }\n";
-    echo"var map = new GMap2(document.getElementById(\"map\"));\n";
-    echo"map.addControl(new GLargeMapControl());\n";
-    echo"map.addControl(new GMapTypeControl());\n";
-    echo"map.setCenter(new GLatLng(".$lat.",".$lon."), ".$zoom.");\n";
-    echo"map.addOverlay(new GMarker(new GLatLng(".$lat.",".$lon."),{draggable:true}));\n";
-    echo"GEvent.addListener(map, \"click\", function(overlay, point){\n";
-    echo"map.clearOverlays();\n";
-    //echo"GEvent.addListener(map, 'zoomend', function() {\n";
-    echo"document.getElementById(\"zoom\").value = map.getZoom();\n";
-    //echo"});\n";
-    echo"if (point) {\n";
-    echo"map.addOverlay(new GMarker(point));\n";
-    echo"map.panTo(point);\n";
-    echo"lat = point.y;\n";
-    echo"lon = point.x;\n";
-    echo"document.getElementById(\"lat\").value = lat;\n";
-    echo"document.getElementById(\"lon\").value = lon;\n";
-    echo"}\n";
-    echo"});\n";
-    echo"}\n";
-    echo"// arrange for our onload handler to 'listen' for onload events\n";
-    echo"if (window.attachEvent) {\n";
-    echo"window.attachEvent(\"onload\", function() {\n";
-    echo"loadMap();	// Internet Explorer\n";
-    echo"});\n";
-    echo"} else {\n";
-    echo"window.addEventListener(\"load\", function() {\n";
-    echo"loadMap(); // Firefox and standard browsers\n";
-    echo"}, false);\n";
-    echo"}\n";
-    echo"//]]&gt;\n";
-    echo"</script >\n";
-    
-    echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_MODPOINT."</th></tr>";
-        echo "<form method=post action=\"main.php\">\n";
-    echo "<tr valign='top' align='center'><td class='head' colspan='2'><div id='map' style='height: 400px'></div ></td></tr>";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_LOCATION."</td>";
-    echo "<td class='even'><input type=text name=title value=\"$title\" size=50 maxlength=100></input></td></tr>\n";
-
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_LONGITUDE."</td>";
-    echo "<td class='even'><input type=text id=lon name=lon value=\"$lon\" size=50 maxlength=100></input></td></tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_LATITUDE."</td>";
-    echo "<td class='even'><input type=text id=lat name=lat value=\"$lat\" size=50 maxlength=100></input></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_ZOOM."</td>";
-    echo "<td class='even'><input type=text name=zoom id=zoom value=\"$zoom\" size=50 maxlength=100></input></td></tr>\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_CATEGORYC."</td>";
-    echo "<td class='even'><select size='1' name='map_id'>";
+    $options = array('lng' => $lon,'lat' => $lat,'zoom' => $zoom);
+    $options['title'] = $name;
+    echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script>\n";
+    insertgscript($options);
+    $form = new XoopsThemeForm(_MD_MODPOINT,'form','main.php');
+    $gmap = new XoopsFormLabel('', "<div id='map' style='height: 400px'></div >");
+    $gmap->setNocolspan(true);
+    $form->addElement($gmap);
+    $form->addElement(new XoopsFormText(_MD_LOCATION,'title',50,100,$title));
+    $form->addElement(new XoopsFormText(_MD_LONGITUDE,'lon',50,250));
+    $form->addElement(new XoopsFormText(_MD_LATITUDE,'lat',50,250));
+    $form->addElement(new XoopsFormText(_MD_ZOOM,'zoom',50, 250));
+    $select = new XoopsFormSelect(_MD_CATEGORYC,'map_id');
     $count_msg = count($entry);
     for ( $i = 0; $i < $count_msg; $i++ ) {
+            $select->addOption($entry[$i]['map_id'],$entry[$i]['name']);
         if ( $map_id == $entry[$i]['map_id'] ) {
-            $opt_selected = "selected='selected'";
-        }else{
-            $opt_selected = "";
+            $select->setValue($entry[$i]['map_id'],$entry[$i]['name']);
         }
-        echo "<option value='".$entry[$i]['map_id']."' $opt_selected >".$entry[$i]['name']."</option>";
     }
-    echo "</select></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_DESCRIPTIONC."</td>";
-    echo "<td class='even'>";
-    xoopsCodeTarea("html",60,8);
-    xoopsSmilies("html");
-        echo "</td></tr>\n";
-    echo "<input type=hidden name=lid value=$id></input>\n";
-        echo "<input type=hidden name=op value=modPointS>\n";
-    echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><table><tr><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form>";
-    echo "<td class='even'>".myTextForm("main.php?op=delPoint&lid=".$lid , _MD_DELETE)."</td>";
-    echo "<td class='even'>".myTextForm("main.php?op=pointMod", _MD_CANCEL)."</td>";
-    echo "</tr></table></td></tr></table>";
-        xoops_cp_footer();
+    $form->addElement($select);
+    $form->addElement(new XoopsFormHidden('lid',$id));
+    $form->addElement(new XoopsFormHidden('op','modPointS'));
+    $tray = new XoopsFormElementTray();
+    $tray->addElement(new XoopsFormButton('', 'modify', _MD_MODIFY, 'submit'));
+    $tray->addElement(new XoopsFormButton('','delete',_MD_DELETE,'submit'));//delCat
+    $cancel = new XoopsFormButton('','cancel',_MD_CANCEL,'button');
+    $cancel->setExtra('onclick="location.href=\'main.php?op=pointMod\'"');
+    $tray->addElement($cancel);
+    $form->addElement($tray);
+    $form->render();
+    echo $form->display();
+    xoops_cp_footer();
 }
 
 //Insert the modified point into the DB
@@ -531,14 +461,21 @@ function modPoint()
 function modPointS()
 {
     global $xoopsDB, $myts, $eh;
-        $title = $myts->makeTboxData4Save($_POST["title"]);
-        $map_id = $_POST["map_id"];
-        $lat = $myts->makeTboxData4Save($_POST["lat"]);
-        $lon = $myts->makeTboxData4Save($_POST["lon"]);
-        $zoom = $myts->makeTboxData4Save($_POST["zoom"]);
+    if(isset($_POST['modify'])){
+        $title = $myts->htmlSpecialChars($_POST["title"]);
+        $map_id = intval($_POST["map_id"]);
+        $lid = $myts->htmlSpecialChars($_POST["lid"]);
+        $lat = $myts->htmlSpecialChars($_POST["lat"]);
+        $lon = $myts->htmlSpecialChars($_POST["lon"]);
+        $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
         $html = $myts->makeTareaData4Save($_POST["html"]);
-        $xoopsDB->query("update ".$xoopsDB->prefix("gmap_points")." set map_id='$map_id', title='$title', lat='$lat', lon='$lon',zoom='$zoom',html='$html', status=2, date=".time()." where id=".$_POST['lid']."")  or $eh->show("0013");
+        $xoopsDB->query("update ".$xoopsDB->prefix("gmap_points")." set map_id='$map_id', title='$title', lat='$lat', lon='$lon',zoom='$zoom',html='$html', status=2, date=".time()." where id=".$lid."")  or $eh->show("0013");
         redirect_header("index.php",1,_MD_DBUPDATED);
+    }elseif(isset($_POST['delete'])){
+        delPoint();
+    }else{        //TODO: ERROR MSG
+        redirect_header("index.php",1,"error message");
+    }
     exit();
 }
 
@@ -547,7 +484,9 @@ function modPointS()
 function delCat()
 {
     global $xoopsDB, $eh, $xoopsModule;
-    $sql = sprintf("DELETE FROM %s WHERE map_id = %u", $xoopsDB->prefix("gmap_category"), $_GET['lid']);
+    $lid = intval($_POST['lid']);
+    $sql = sprintf("DELETE FROM %s WHERE map_id = %u", $xoopsDB->prefix("gmap_category"), $lid);//TODO: orphaned points.
+    print($sql);
     $xoopsDB->query($sql) or $eh->show("0013");
     redirect_header("index.php",1,_MD_CATDELETED);
     exit();
@@ -558,7 +497,8 @@ function delCat()
 function delPoint()
 {
     global $xoopsDB, $eh, $xoopsModule;
-    $sql = sprintf("DELETE FROM %s WHERE id = %u", $xoopsDB->prefix("gmap_points"), $_GET['lid']);
+    $lid = intval($_POST['lid']);
+    $sql = sprintf("DELETE FROM %s WHERE id = %u", $xoopsDB->prefix("gmap_points"), $lid);
     $xoopsDB->query($sql) or $eh->show("0013");
     redirect_header("index.php",1,_MD_POINTDELETED);
     exit();
@@ -568,7 +508,6 @@ function delPoint()
 
 function plAdd()
 {
-    
     global $xoopsDB;
     $result2 = $xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_points")."");
     list($numrows2) = $xoopsDB->fetchRow($result2);
@@ -579,45 +518,43 @@ function plAdd()
         $entry[$i]['id']   = $array['id'];
         $entry[$i]['title']   = $array['title'];
         $i++;
-         }
+    }
     $result3 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
-        $i = 0;
+    $i = 0;
     while ($array = $xoopsDB->fetchArray($result3)) {
         $centry[$i]['map_id']   = $array['map_id'];
         $centry[$i]['name']   = $array['name'];
         $i++;
     }
     xoops_cp_header();
-    echo "<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_PLADD."</th></tr>";
-    echo "<form method=post action=\"main.php\">\n";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_PLID1."</td>";
-    echo "<td class='even'><select size='1' name='lid'>";
-    echo "<option value=' '>------</option>";
+    $form = new XoopsThemeForm(_MD_PLADD,'','main.php');
+    $selectPolyStart = new XoopsFormSelect(_MD_PLID1, 'lid');//Start point
+    //$selectPolyStart->addOption('','------');
     $count_msg = count($entry);
     for ( $i = 0; $i < $count_msg; $i++ ) {
-        echo "<option value='".$entry[$i]['id']."'>".$entry[$i]['title']."</option>";
+         $selectPolyStart->addOption($entry[$i]['id'],$entry[$i]['title']);
     }
-    echo "</select></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_PLID2."</td>";
-    echo "<td class='even'><select size='1' name='lid2'>";
-    echo "<option value=' '>------</option>";
+    $form->addElement($selectPolyStart);
+    $selectPolyEnd = new XoopsFormSelect(_MD_PLID2, 'lid2');
+    $form->addElement($selectPolyEnd);
+    //$selectPolyEnd->addOption('','------');
     $count_msg = count($entry);
     for ( $i = 0; $i < $count_msg; $i++ ) {
-        echo "<option value='".$entry[$i]['id']."'>".$entry[$i]['title']."</option>";
+        $selectPolyEnd->addOption($entry[$i]['id'],$entry[$i]['title']);
     }
-    echo "</select></td></tr>\n";
-    echo "<tr valign='top' align='left'><td class='head'>"._MD_CATEGORYC."</td>";
-    echo "<td class='even'><select size='1' name='map_id'>";
+    $selectCategory = new XoopsFormSelect(_MD_CATEGORYC,'map_id');
     $count_msg = count($centry);
     for ( $i = 0; $i < $count_msg; $i++ ) {
-        echo "<option value='".$centry[$i]['map_id']."'>".$centry[$i]['name']."</option>";
+        $selectCategory->addOption($centry[$i]['map_id'],$centry[$i]['name']);
     }
-    echo "</select></td></tr>\n";
-    echo "<input type=hidden name=fct value=mypoints>\n";
-    echo "<input type=hidden name=op value=plInsert><br /><br />\n";
-    echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_ADD."' accesskey=\"s\" /></form></td></tr></table>";
+    $form->addElement($selectCategory);
+    $form->addElement(new XoopsFormHidden('fct','mypoints'));
+    $form->addElement(new XoopsFormHidden('op','plInsert'));
+    $form->addElement(new XoopsFormButton('','post',_MD_ADD,'submit'));
+    $form->render();
+    echo $form->display();
     xoops_cp_footer();
-    }else{
+    }else{//???
          redirect_header("index.php",1,_MD_NOPOINTS);
     }
 }
@@ -794,28 +731,29 @@ function delPl()
 
 function catOrder()
 {
-global $xoopsDB,$myts, $eh;
-$entry=array();
-$result = $xoopsDB->query("select `map_id`, `name`, `order` from ".$xoopsDB->prefix("gmap_category")." ORDER BY `order` ASC") or $eh->show("0013");
-$i = 0;
+    global $xoopsDB,$myts, $eh;
+    $entry=array();
+    $result = $xoopsDB->query("select `map_id`, `name`, `order` from ".$xoopsDB->prefix("gmap_category")." ORDER BY `order` ASC") or $eh->show("0013");
+    $i = 0;
     while ($array = $xoopsDB->fetchArray($result)) {
-    $entry[$i]['id']   = $array['map_id'];
-    $entry[$i]['name']   = $array['name'];
-    $entry[$i]['order']   = $array['order'];
-    $i++;
-     }
-xoops_cp_header();
-    echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_CATORDER."</th></tr>";
-        echo "<form method=post action=main.php>";
-    
-    $count_msg = count($entry);
-    echo "<input type=hidden name=count value='".$count_msg."'>";
-    for ( $i = 0; $i < $count_msg; $i++ ) {
-        echo "<tr valign='top' align='left'><td class='head'>".$entry[$i]['name']."</td><td class='even'><input type=text name=order".$i." value=".$entry[$i]['order']." size=3 maxlength=100></input></td></tr>\n";
-        echo "<input type=hidden name=id".$i." value=".$entry[$i]['id'].">\n";
+        $entry[$i]['id']   = $array['map_id'];
+        $entry[$i]['name']   = $array['name'];
+        $entry[$i]['order']   = $array['order'];
+        $i++;
     }
-echo "<input type=hidden name=op value=catOrderS>";
-echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form></td></tr></table>";
+    xoops_cp_header();
+    $form = new XoopsThemeForm(_MD_CATORDER,'form','main.php');
+    $count_msg = count($entry);
+    $form->addElement(new XoopsFormHidden('count',$count_msg));
+    $form->addElement(new XoopsFormHidden('op','catOrderS'));
+    for ( $i = 0; $i < $count_msg; $i++ ) {
+        //TODO: length
+        $form->addElement(new XoopsFormText($entry[$i]['name'],'order'.$i,25,25,$entry[$i]['order']));
+        $form->addElement(new XoopsFormHidden('id'.$i,$entry[$i]['id']));
+    }
+    $form->addElement(new XoopsFormButton('','post',_MD_MODIFY,'submit'));
+    $form->render();
+    echo $form->display();
     xoops_cp_footer();
 }
 
@@ -823,12 +761,11 @@ echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><inpu
 
 function catOrderS()
 {
-   global $xoopsDB, $myts, $eh;
-
-    $count_msg = $_POST["count"];
+    global $xoopsDB, $myts, $eh;
+    $count_msg = intval($_POST["count"]);
     for ( $i = 0; $i < $count_msg; $i++ ) {
-        $id = $_POST["id".$i];
-        $order = $_POST["order".$i];
+        $id = intval($_POST["id".$i]);
+        $order = intval($_POST["order".$i]);
         $xoopsDB->query("update ".$xoopsDB->prefix("gmap_category")." set `order`='$order' where map_id='$id'")  or $eh->show("0013");
     }
     redirect_header("index.php",1,_MD_DBUPDATED);
@@ -955,9 +892,9 @@ case "modCat":
 case "modCatS":
     modCatS();
     break;
-case "delCat":
-    delCat();
-    break;
+//case "delCat":
+  //  delCat();
+    //break;
 case "delPoint":
     delPoint();
     break;
@@ -981,6 +918,7 @@ case "catOrderS":
     break;
 case 'main':
 default:
+    $op = 'main';
     main();
     break;
 }
