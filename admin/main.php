@@ -595,7 +595,6 @@ function plInsert()
 
 function plMod()
 {
-    
     global $xoopsDB;
     $result2 = $xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_pl")."");
     list($numrows2) = $xoopsDB->fetchRow($result2);
@@ -784,58 +783,62 @@ function catOrderS()
 
 //Order a Point
 
-function pointOrder()
+function pointOrder($fct)
 {
     global $xoopsDB,$myts, $eh;
-    $result='';
-    $entry=array();
-    $centry=array();
-    if (isset($_POST['map_id'])){
-        $map_id = $_POST['map_id'];
-        $result = $xoopsDB->query("select `id`, `title`, `order` from ".$xoopsDB->prefix("gmap_points")." WHERE `map_id` = ".$map_id." ORDER BY `order` ASC") or $eh->show("0013");
-    }
-    $i = 0;
-        while ($array = $xoopsDB->fetchArray($result)) {
-        $entry[$i]['id']   = $array['id'];
-        $entry[$i]['title']   = $array['title'];
-        $entry[$i]['order']   = $array['order'];
-        $i++;
-         }
-    $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
-        $i = 0;
-    while ($array = $xoopsDB->fetchArray($result1)) {
-        $centry[$i]['map_id']   = $array['map_id'];
-        $centry[$i]['name']   = $array['name'];
-        $i++;
-    }
-
-    if($i == 0){
-        redirect_header("index.php",1,_MD_NOPOINTS);
+    if($fct == 'pointOrderS' & isset($_POST['modify']) & ($_POST['map_id'] != -1)){
+        pointOrderS();
     }else{
-        xoops_cp_header();
-        echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_POINTORDER."</th></tr>";
-        echo "<form method=post action=main.php>";
-        echo "<tr valign='top' align='left'><td class='head'>"._MD_CATEGORYC."</td>";
-        $count_msg = count($entry);
-        echo "<td class='even'><input type=hidden name=op value=pointOrder><select size='1' onchange=\"JavaScript:submit()\" name='map_id'>";
-        $count_msg2 = count($centry);
-        for ( $i = 0; $i < $count_msg2; $i++ ) {
-            if ( $map_id == $centry[$i]['map_id'] ) {
-                $opt_selected = "selected='selected'";
-            }else{
-                $opt_selected = "";
+        $result='';
+        $entry=array();
+        $centry=array();
+        if (isset($_POST['map_id'])){
+            $map_id = $_POST['map_id'];
+            $result = $xoopsDB->query("select `id`, `title`, `order` from ".$xoopsDB->prefix("gmap_points")." WHERE `map_id` = ".$map_id." ORDER BY `order` ASC") or $eh->show("0013");
+        }
+        $i = 0;
+            while ($array = $xoopsDB->fetchArray($result)) {
+            $entry[$i]['id']   = $array['id'];
+            $entry[$i]['title']   = $array['title'];
+            $entry[$i]['order']   = $array['order'];
+            $i++;
             }
-            echo "<option value='".$centry[$i]['map_id']."' $opt_selected >".$centry[$i]['name']."</option>";
+        $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
+            $i = 0;
+        while ($array = $xoopsDB->fetchArray($result1)) {
+            $centry[$i]['map_id']   = $array['map_id'];
+            $centry[$i]['name']   = $array['name'];
+            $i++;
         }
-        echo "</select></td></tr></form>";
-        echo "<form method=post action=main.php>";
-        echo "<input type=hidden name=count value='".$count_msg."'>";
-        for ( $i = 0; $i < $count_msg; $i++ ) {
-            echo "<tr valign='top' align='left'><td class='head'>".$entry[$i]['title']."</td><td class='even'><input type=text name=order".$i." value=".$entry[$i]['order']." size=3 maxlength=100></input><input type=hidden name=id".$i." value=".$entry[$i]['id']."></td></tr>\n";
+        if(count($centry) == 0){
+            redirect_header("index.php",1,_MD_NOPOINTS);
+        }else{
+            $count_msg = count($entry);
+            xoops_cp_header();
+            $form = new XoopsThemeForm(_MD_POINTORDER,'','main.php?op=pointOrder');//
+            $select = new XoopsFormSelect(_MD_CATEGORYC,'map_id');
+            $select->setExtra('onchange="JavaScript:submit()"');
+            $count_msg2 = count($centry);
+            $select->addOption('-1','------');
+            for ( $i = 0; $i < $count_msg2; $i++ ) {
+                $select->addOption($centry[$i]['map_id'],$centry[$i]['name']);
+                if ($map_id == $centry[$i]['map_id'] ) {
+                    $select->setValue($centry[$i]['map_id'],$centry[$i]['name']);
+                }
+            }
+            $form->addElement($select);
+            $form->addElement(new XoopsFormHidden('count',$count_msg));
+            $form->addElement(new XoopsFormHidden('fct','pointOrderS'));//TODO:
+
+            for ( $i = 0; $i < $count_msg; $i++ ) {
+                $form->addElement(new XoopsFormText($entry[$i]['title'],'order'.$i,50,250,$entry[$i]['order']));
+                $form->addElement(new XoopsFormHidden('id'.$i,$entry[$i]['id']));
+            }
+            $form->addElement(new XoopsFormButton('', 'modify', _MD_MODIFY, 'submit'));
+            $form->render();
+            echo $form->display();
+            xoops_cp_footer();
         }
-        echo "<input type=hidden name=op value=pointOrderS>";
-        echo "<tr valign='top' align='left'><td class='head'></td><td class='even'><input type='submit' class='formButton' name='post'  id='post' value='"._MD_MODIFY."' accesskey=\"s\" /></form></td></tr></table>";
-        xoops_cp_footer();
     }
 }
 
@@ -928,11 +931,11 @@ case "pointDel":
     pointDel();
     break;
 case "pointOrder":
-    pointOrder();
+    pointOrder($fct);
     break;
-case "pointOrderS":
-    pointOrderS();
-    break;
+//case "pointOrderS":
+//    pointOrderS();
+//    break;
 case "catOrder":
     catOrder();
     break;
