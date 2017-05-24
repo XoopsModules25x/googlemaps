@@ -52,7 +52,7 @@ $xoopsTpl->assign("xoops_module_header", '<link rel="stylesheet" type="text/css"
 
 $xoopsTpl->assign("adminpage", "<a href='" . XOOPS_URL . "/modules/" . $xoopsModule->getVar('dirname')."/admin/index.php'>" ._MD_GMAPS_GOTOADMIN . "</a>");
 
-$myts =& MyTextSanitizer::getInstance();
+$myts = MyTextSanitizer::getInstance();
 
 global $myts,$xoopsUser;
 
