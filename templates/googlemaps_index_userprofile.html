@@ -3,7 +3,7 @@
 <{$header}>
 <{if $isuser}>
 	<{$smarty.const._MD_INSTRUCTIONS2}> - 
-	<a href="<{$xoops_url}>/modules/googlemaps/managepoint.php"><{$smarty.const._MD_STITLE}></a>
+	<a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/managepoint.php"><{$smarty.const._MD_STITLE}></a>
 <{else}>
 	<{$smarty.const._MD_INSTRUCTIONS}>
 <{/if}>
@@ -93,7 +93,7 @@ function initMap() {
 		gmarkers[i] = marker;
 		gmarkers[i].cat_id = cat_id;
 		i++;
-		var html2 = "<div class='infobox'><img src='<{$xoops_url}>/modules/googlemaps/images/meet.png'"+
+		var html2 = "<div class='infobox'><img src='<{$xoops_url}>/modules/<{$xoops_dirname}>/images/meet.png'"+
 		"width='24' height='24'><{$smarty.const._MD_DIRECTIONS}> <b><{$smarty.const._MD_TOHERE}></b>" + 
 		"<br /><{$smarty.const._MD_STARTADDRESS}><form action='http://maps.google.com/maps' method='get' " +
 		"target='_blank'>" +
@@ -117,10 +117,11 @@ function initMap() {
 		mapTypeId: '<{$map_type}>'
 	}
 	map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
     // add the points 
 	<{section name=displaypoint loop=$point}>	
 		createMarker(new google.maps.LatLng(<{$point[displaypoint].lat}>,<{$point[displaypoint].lon}>),
-		"<{$point[displaypoint].title}>","<{$point[displaypoint].cat_id}>","<div class='infobox'><b><a href='<{$xoops_url}>/userinfo.php?uid=<{$point[displaypoint].uid}>' title='Lien vers Profil' ><img src='<{$xoops_url}>/modules/googlemaps/images/profil.png' width='24' height='24'>  <{$point[displaypoint].nom}></a></b> - <{$point[displaypoint].promo}><br /><{$point[displaypoint].title}><br /><br /><img src='<{$xoops_url}>/uploads/<{$point[displaypoint].avatar_url}>' border='0' alt='<{$point[displaypoint].nom}>' /><br /><br /><{$point[displaypoint].html}></div>");
+		"<{$point[displaypoint].title}>","<{$point[displaypoint].cat_id}>","<div class='infobox'><b><a href='<{$xoops_url}>/userinfo.php?uid=<{$point[displaypoint].uid}>' title='Lien vers Profil' ><img src='<{$xoops_url}>/modules/<{$xoops_dirname}>/images/profil.png' width='24' height='24'>  <{$point[displaypoint].nom}></a></b> - <{$point[displaypoint].promo}><br /><{$point[displaypoint].title}><br /><br /><img src='<{$xoops_url}>/uploads/<{$point[displaypoint].avatar_url}>' border='0' alt='<{$point[displaypoint].nom}>' /><br /><br /><{$point[displaypoint].html}></div>");
 	<{/section}>
 
 	// add polyline

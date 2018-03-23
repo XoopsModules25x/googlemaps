@@ -1,9 +1,9 @@
 <?php
 /************************************************************************/
- # Google Maps                  							#
+ # Google Maps                  							            #
  #                                                                  	#
- # Created by  Phatbloke (phatbloke@world-net.co.nz)
- # improved and empowered by Marco (mdxprod.com)
+ # Created by  Phatbloke (phatbloke@world-net.co.nz)                    #
+ # improved and empowered by Marco (mdxprod.com)                        #
 /************************************************************************/
 
 $modversion['name'] = _MI_GMAPS_NAME;
@@ -16,7 +16,7 @@ $modversion['license'] = 'GNU GPL 2.0';
 $modversion['license_url'] = "www.gnu.org/licenses/gpl-2.0.html/";
 $modversion['official'] = 0;
 $modversion['image'] = "images/logo.png";
-$modversion['dirname'] = "googlemaps";
+$modversion['dirname'] = basename(dirname(__FILE__));//"googlemaps";
 $modversion['dirmoduleadmin'] = '/Frameworks/moduleclasses/moduleadmin';
 $modversion['icons16'] = '../../Frameworks/moduleclasses/icons/16';
 $modversion['icons32'] = '../../Frameworks/moduleclasses/icons/32';
