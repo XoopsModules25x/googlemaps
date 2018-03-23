@@ -86,6 +86,10 @@ function insertgscript($options)
     });
 
     putMarker(myLatLng);
+    map.addListener('zoom_changed', function(){
+		document.getElementById('zoom').value = map.getZoom();
+    });
+    
     google.maps.event.addListener(map, 'click', function(event) {
         putMarker(event.latLng);
         });
