@@ -48,7 +48,10 @@ define("_MI_INSTRUCTIONS","<b>Instructions</b><br>
 - Use the slider on the left to zoom in and out<br>
 - Click on the red pointers to find out about each location<br>
 - Click the quick links to the right to zoom to the pre-defined location<br>");
-
+define('_MI_GMAPS_ROADMAP','Roadmap');
+define('_MI_GMAPS_TERRAIN','Terrain');
+define('_MI_GMAPS_HYBRID','Hybrid');
+define('_MI_GMAPS_SAT','Satelite');
 // Description of each config items
 define('_MI_GMAPS_TITLEDSC','displayed in the title bar of the map');
 define('_MI_GMAPS_APIDSC','Get keys from <a href="http://www.google.com/apis/maps/">http://www.google.com/apis/maps/</a>');
