@@ -257,7 +257,7 @@ function pointMod()
 
 //Modify the point
 
-function modPoint()
+function modPoint()//managepoint.php 
 {
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig, $xoopsModule;
     $lid = intval($_GET['lid']);
@@ -282,46 +282,47 @@ function modPoint()
         $i++;
     }
     
-
     //Display Map
-
-    echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
+    //echo"<script src=\"http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script >\n";
+    echo '<script async defer src="https://maps.googleapis.com/maps/api/js?key='.$xoopsModuleConfig['api'].'&callback=loadMap" type="text/javascript"></script>\n';
     echo"<script type=\"text/javascript\">\n";
     echo"//&lt;![CDATA[ \n";
-    echo"function loadMap(){\n";
+    echo "function loadMap(){\n";
     //echo"function GPoint2(x,y) { return new GLatLng(y,x); }\n";
-    echo"var map = new GMap2(document.getElementById(\"map\"));\n";
-    echo"map.addControl(new GLargeMapControl());\n";
-    echo"map.addControl(new GMapTypeControl());\n";
-    echo"map.setCenter(new GLatLng(".$lat.",".$lon."), ".$zoom.");\n";
-    echo"map.addOverlay(new GMarker(new GLatLng(".$lat.",".$lon."),{draggable:true}));\n";
-    echo"GEvent.addListener(map, \"click\", function(overlay, point){\n";
-    echo"map.clearOverlays();\n";
-    //echo"GEvent.addListener(map, 'zoomend', function() {\n";
-    echo"document.getElementById(\"zoom\").value = map.getZoom();\n";
-    //echo"});\n";
-    echo"if (point) {\n";
-    echo"map.addOverlay(new GMarker(point,{draggable:true}));\n";
-    echo"map.panTo(point);\n";
-    echo"lat = point.y;\n";
-    echo"lon = point.x;\n";
-    echo"document.getElementById(\"lat\").value = lat;\n";
-    echo"document.getElementById(\"lon\").value = lon;\n";
-    echo"}\n";
-    echo"});\n";
-    echo"}\n";
-    echo"// arrange for our onload handler to 'listen' for onload events\n";
-    echo"if (window.attachEvent) {\n";
-    echo"window.attachEvent(\"onload\", function() {\n";
-    echo"loadMap();	// Internet Explorer\n";
-    echo"});\n";
-    echo"} else {\n";
-    echo"window.addEventListener(\"load\", function() {\n";
-    echo"loadMap(); // Firefox and standard browsers\n";
-    echo"}, false);\n";
-    echo"}\n";
-    echo"//]]&gt;\n";
-    echo"</script >\n";
+    echo"
+        var map = new google.maps.Map(document.getElementById(\"map\"))
+        map.setCenter({lat:".$lat.", lng:".$lon."})
+        map.setZoom(".$zoom.")
+        var marker = new google.maps.Marker({
+            position: {lat:".$lat.", lng:".$lon."},
+            map: map
+        })
+        map.addListener(\"click\", function(event){
+            document.getElementById(\"zoom\").value = map.getZoom()
+            document.getElementById(\"lat\").value = event.latLng.lat();
+            document.getElementById(\"lon\").value = event.latLng.lng();
+            marker.setPosition(event.latLng);
+            map.setCenter(event.latLng);       
+
+        });
+
+        map.addListener(\"zoom_changed\", function(){
+            document.getElementById(\"zoom\").value = map.getZoom();
+        });
+    }        
+        // arrange for our onload handler to 'listen' for onload events
+        if (window.attachEvent) {
+            window.attachEvent(\"onload\", function() {
+            loadMap();	// Internet Explorer
+            });
+        } else {
+            window.addEventListener(\"load\", function() {
+                loadMap(); // Firefox and standard browsers
+            }, false);
+        }
+        //]]&gt";
+    echo"</script >";
+    
     
     echo"<table width='100%' class='outer' cellspacing='1'><tr><th colspan='2'>"._MD_MODPOINT."</th></tr>";
         echo "<form method=post action=\"managepoint.php\">\n";
