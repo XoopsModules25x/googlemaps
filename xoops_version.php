@@ -90,7 +90,7 @@ $modversion['config'][3]['description'] = '_MI_GMAPS_MAPTYPEDSC';
 $modversion['config'][3]['formtype'] = 'select';
 $modversion['config'][3]['valuetype'] = 'text';
 $modversion['config'][3]['default'] = "Roadmap";
-$modversion['config'][3]['options'] = array('_MI_GMAPS_ROADMAP'=>'roadmap','_MI_GMAPS_TERRAIN'=>'terrain','_MI_GMAPS_HYBRID'=>'hybrid','_MI_GMAPS_MAP_SAT'=>'satellite');
+$modversion['config'][3]['options'] = array('_MI_GMAPS_ROADMAP'=>'roadmap','_MI_GMAPS_TERRAIN'=>'terrain','_MI_GMAPS_HYBRID'=>'hybrid','_MI_GMAPS_SAT'=>'satellite');
 
 $modversion['config'][4]['name'] = 'map_width';
 $modversion['config'][4]['title'] = '_MI_GMAPS_MAPWIDTH';
