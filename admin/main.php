@@ -152,10 +152,10 @@ function catAdd()
 function catInsert()
 {
     global $xoopsConfig, $xoopsDB, $myts, $xoopsUser, $xoopsModule, $eh;
-    $title = $myts->htmlSpecialChars($_POST["title"]);
-    $lat = $myts->htmlSpecialChars($_POST["lat"]);
-    $lon = $myts->htmlSpecialChars($_POST["lon"]);
-    $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
+    $title = $myts->addslashes($_POST["title"]);
+    $lat = $myts->addslashes($_POST["lat"]);
+    $lon = $myts->addslashes($_POST["lon"]);
+    $zoom = intval($_POST["zoom"]);
     $errormsg = '';
     // Check if Title exist
     if($title == "") {
@@ -264,10 +264,10 @@ function modCat()
 function modCatS(){
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig;
     if(isset($_POST['modify'])){
-        $name = $myts->htmlSpecialChars($_POST["name"]);
-        $lat = $myts->htmlSpecialChars($_POST["lat"]);
-        $lon = $myts->htmlSpecialChars($_POST["lon"]);
-        $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
+        $name = $myts->addslashes($_POST["name"]);
+        $lat = $myts->addslashes($_POST["lat"]);
+        $lon = $myts->addslashes($_POST["lon"]);
+        $zoom = intval($_POST["zoom"]);
         $lid = intval($_POST['lid']);
         $xoopsDB->query("update ".$xoopsDB->prefix("gmap_category")." set name='$name', lat='$lat', lon='$lon',zoom='$zoom'where map_id=".$lid."")  or $eh->show("0013");
         redirect_header("index.php",1,_MD_DBUPDATED);
@@ -321,11 +321,11 @@ function pointAdd()
 function pointInsert()
 {
     global $xoopsConfig, $xoopsDB, $myts, $xoopsUser, $xoopsModule, $eh;
-    $title = $myts->htmlSpecialChars($_POST["title"]);
-    $lat = $myts->htmlSpecialChars($_POST["lat"]);
-    $lon = $myts->htmlSpecialChars($_POST["lon"]);
-    $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
-    $category = $myts->htmlSpecialChars($_POST["category"]);
+    $title = $myts->addslashes($_POST["title"]);
+    $lat = $myts->addslashes($_POST["lat"]);
+    $lon = $myts->addslashes($_POST["lon"]);
+    $zoom = intval($_POST["zoom"]);
+    $category = $myts->addslashes($_POST["category"]);
     $description = $myts->makeTareaData4Save($_POST["description"]);
     $submitter = $xoopsUser->uid();
     $date = time();
@@ -360,7 +360,6 @@ function pointInsert()
 }
 
 //Modify a point select page to choose which point to mod
-
 function pointMod()
 {
         global $xoopsDB;
@@ -406,7 +405,6 @@ function pointMod()
 }
 
 //Modify the point
-
 function modPoint()
 {
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig;
@@ -414,9 +412,9 @@ function modPoint()
     //TODO:ERR
     $result = $xoopsDB->query("select id, lat, lon, zoom, map_id, title, html from ".$xoopsDB->prefix("gmap_points")." where id=$lid") or $eh->show("0013");
     list($id, $lat, $lon, $zoom, $map_id, $title, $html) = $xoopsDB->fetchRow($result);
-    $title = $myts->htmlSpecialChars($title);
-    $lat = $myts->htmlSpecialChars($lat);
-    $lon = $myts->htmlSpecialChars($lon);
+    $title = $myts->addslashes($title);
+    $lat = $myts->addslashes($lat);
+    $lon = $myts->addslashes($lon);
     $zoom = intval($zoom);
     $map_id = intval($map_id);
     $GLOBALS['html'] = $myts->htmlSpecialChars($html);//??
@@ -428,10 +426,8 @@ function modPoint()
         $i++;
     }
     xoops_cp_header();
-
     //Display Map
     $options = array('lng' => $lon,'lat' => $lat,'zoom' => $zoom);
-    $options['title'] = $name;
     echo "<script src=\"https://maps.googleapis.com/maps/api/js?key=".$xoopsModuleConfig['api']."\" type=\"text/javascript\"></script>\n";
     insertgscript($options);
     $form = new XoopsThemeForm(_MD_MODPOINT,'form','main.php?op=pointMod');
@@ -471,12 +467,12 @@ function modPointS()
 {
     global $xoopsDB, $myts, $eh;
     if(isset($_POST['modify'])){
-        $title = $myts->htmlSpecialChars($_POST["title"]);
+        $title = $myts->addslashes($_POST["title"]);
         $map_id = intval($_POST["map_id"]);
-        $lid = $myts->htmlSpecialChars($_POST["lid"]);
-        $lat = $myts->htmlSpecialChars($_POST["lat"]);
-        $lon = $myts->htmlSpecialChars($_POST["lon"]);
-        $zoom = $myts->htmlSpecialChars($_POST["zoom"]);
+        $lid = $myts->addslashes($_POST["lid"]);
+        $lat = $myts->addslashes($_POST["lat"]);
+        $lon = $myts->addslashes($_POST["lon"]);
+        $zoom = $myts->addslashes($_POST["zoom"]);
         $html = $myts->makeTareaData4Save($_POST["html"]);
         $xoopsDB->query("update ".$xoopsDB->prefix("gmap_points")." set map_id='$map_id', title='$title', lat='$lat', lon='$lon',zoom='$zoom',html='$html', status=2, date=".time()." where id=".$lid."")  or $eh->show("0013");
         redirect_header("index.php",1,_MD_DBUPDATED);
@@ -643,7 +639,7 @@ function plMod()
 function modPl()
 {
     global $xoopsDB, $myts, $eh, $mytree, $xoopsConfig, $xoopsModuleConfig;
-    $lid = $_GET['lid'];
+    $lid = intval($_GET['lid']);
     $result = $xoopsDB->query("select * from ".$xoopsDB->prefix("gmap_pl")." where id=$lid") or $eh->show("0013");
     list($id, $map_id, $point_id1, $point_id2) = $xoopsDB->fetchRow($result);
     $result1 = $xoopsDB->query("select map_id, name from ".$xoopsDB->prefix("gmap_category")."");
@@ -729,7 +725,7 @@ function modPlS()
 function delPl()
 {
     global $xoopsDB, $eh, $xoopsModule;
-    $sql = sprintf("DELETE FROM %s WHERE id = %u", $xoopsDB->prefix("gmap_pl"), $_GET['lid']);
+    $sql = sprintf("DELETE FROM %s WHERE id = %u", $xoopsDB->prefix("gmap_pl"), intval($_GET['lid']));
     $xoopsDB->query($sql) or $eh->show("0013");
     redirect_header("index.php",1,_MD_POINTDELETED);
     exit();
