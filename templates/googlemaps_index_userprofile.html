@@ -125,16 +125,21 @@ function initMap() {
 	<{/section}>
 
 	// add polyline
-	 /*<{section name=displaypoly loop=$poly}>
-	var polyline = new google.maps.Polyline([new google.maps.LatLng(<{$poly[displaypoly].lat_id1}>,<{$poly[displaypoly].lon_id1}>),
-		new google.maps.LatLng(<{$poly[displaypoly].lat_id2}>,<{$poly[displaypoly].lon_id2}>)],
-		"#ff0000", 3);
-		polyline.type = "<{$poly[displaypoly].map_id}>";
+	<{section name=displaypoly loop=$poly}>
+	var polyCoords = [new google.maps.LatLng(<{$poly[displaypoly].lat_id1}>,<{$poly[displaypoly].lon_id1}>),
+		new google.maps.LatLng(<{$poly[displaypoly].lat_id2}>,<{$poly[displaypoly].lon_id2}>)];
+	var polyline = new google.maps.Polyline({
+		path: polyCoords,
+		strokeColor: "#ff0000",
+		strokeOpacity: 1.0,
+		strokeWeight: 3
+		});
+		//polyline.type = "<{$poly[displaypoly].map_id}>";??
 		polyline.setMap(map);
 		//polyline.display(false);
 		gpolylines[k] = polyline;
 		k++;
-	<{/section}>*/
+	<{/section}>
 
 	//Categories
 	<{section name=displaycateg loop=$category}>	
