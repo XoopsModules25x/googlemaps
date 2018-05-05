@@ -68,7 +68,7 @@ define("_MD_MODPOINT","Modify Point");
 define("_MD_ALREADY","You already have set your position");
 define("_MD_MODPL","Modify Polyline");
 define("_MD_DELETE","Delete");
-define("_MD_ERROR","You have be connected to add a point");
+define("_MD_ERROR","You have be logged in to add a point");
 define("_MD_CANCEL","Cancel");
 define("_MD_DELPOINT","Delete a point.");
 define("_MD_DBUPDATED","Database updated.");

@@ -22,7 +22,7 @@ include_once dirname(__FILE__) . '/admin_header.php';
 
 xoops_cp_header();
 
-    $indexAdmin = new ModuleAdmin();
+$indexAdmin = new ModuleAdmin();
 
 //-----------------------
 
@@ -35,9 +35,7 @@ $indexAdmin->addInfoBoxLine(
     _MD_GMAPS_DASHBOARD, _MD_THEREARE , $numrows, 'Green'
 );
 //----------------------------
-
-
-    echo $indexAdmin->addNavigation('index.php');
-    echo $indexAdmin->renderIndex();
+echo $indexAdmin->addNavigation('index.php');
+echo $indexAdmin->renderIndex();
 
 include "admin_footer.php";

@@ -1,9 +1,9 @@
 <?php
 /************************************************************************/
- # Google Maps                  							#
+ # Google Maps                  							            #
  #                                                                  	#
- # Created by  Phatbloke (phatbloke@world-net.co.nz)
- # improved and empowered by Marco (mdxprod.com)
+ # Created by  Phatbloke (phatbloke@world-net.co.nz)                    #
+ # improved and empowered by Marco (mdxprod.com)                        #
 /************************************************************************/
 
 $modversion['name'] = _MI_GMAPS_NAME;
@@ -11,12 +11,12 @@ $modversion['version'] = 0.91;
 $modversion['description'] = _MI_GMAPS_DESC;
 $modversion['author'] = "Phatbloke, Marco";
 $modversion['credits'] = "Phatbloke,Herve,Philou,Skalpa,Kris,Dugris,Solo,Vivi for inspiration and tips";
-$modversion['help']        = 'page=help';
-$modversion['license']     = 'GNU GPL 2.0';
+$modversion['help'] = 'page=help';
+$modversion['license'] = 'GNU GPL 2.0';
 $modversion['license_url'] = "www.gnu.org/licenses/gpl-2.0.html/";
 $modversion['official'] = 0;
 $modversion['image'] = "images/logo.png";
-$modversion['dirname'] = "googlemaps";
+$modversion['dirname'] = basename(dirname(__FILE__));//"googlemaps";
 $modversion['dirmoduleadmin'] = '/Frameworks/moduleclasses/moduleadmin';
 $modversion['icons16'] = '../../Frameworks/moduleclasses/icons/16';
 $modversion['icons32'] = '../../Frameworks/moduleclasses/icons/32';
@@ -51,7 +51,6 @@ $modversion['adminmenu'] = "admin/menu.php";
 $modversion['hasMain'] = 1;
 //$modversion['sub'][1]['name'] = "Google Maps";
 //$modversion['sub'][1]['url'] = "../../modules/googlemaps/";
-
 
 // Smarty
 $modversion['use_smarty'] = 1;
@@ -89,9 +88,9 @@ $modversion['config'][3]['name'] = 'map_type';
 $modversion['config'][3]['title'] = '_MI_GMAPS_MAPTYPE';
 $modversion['config'][3]['description'] = '_MI_GMAPS_MAPTYPEDSC';
 $modversion['config'][3]['formtype'] = 'select';
-$modversion['config'][3]['valuetype'] = 'array';
-$modversion['config'][3]['default'] = "_MAP_TYPE";
-$modversion['config'][3]['options'] = array('Map' => 'G_NORMAL_MAP', 'Hybrid' => 'G_HYBRID_MAP', 'Satellite' => 'G_SATELLITE_MAP');
+$modversion['config'][3]['valuetype'] = 'text';
+$modversion['config'][3]['default'] = "Roadmap";
+$modversion['config'][3]['options'] = array('_MI_GMAPS_ROADMAP'=>'roadmap','_MI_GMAPS_TERRAIN'=>'terrain','_MI_GMAPS_HYBRID'=>'hybrid','_MI_GMAPS_SAT'=>'satellite');
 
 $modversion['config'][4]['name'] = 'map_width';
 $modversion['config'][4]['title'] = '_MI_GMAPS_MAPWIDTH';
