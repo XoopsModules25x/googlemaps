@@ -565,9 +565,9 @@ function plAdd()
 function plInsert()
 {
     global $xoopsConfig, $xoopsDB, $myts, $xoopsUser, $xoopsModule, $eh;
-    $point_id1 = $_POST["lid"];
-    $point_id2 = $_POST["lid2"];
-    $map_id = $_POST["map_id"];
+    $point_id1 = intval($_POST["lid"]);
+    $point_id2 = intval($_POST["lid2"]);
+    $map_id = intval($_POST["map_id"]);
     $errormsg = '';
     // Check if point exists
     if ($point_id1 == "" | $point_id2 == "") {
@@ -707,10 +707,10 @@ function modPl()
 function modPlS()
 {
     global $xoopsDB, $myts, $eh;
-    $point_id1 = $_POST["lid"];
-    $point_id2 = $_POST["lid2"];
-    $map_id = $_POST["map_id"];
-    $xoopsDB->query("update " . $xoopsDB->prefix("gmap_pl") . " set map_id='$map_id', point_id1='$point_id1', point_id2='$point_id2', active=2 where id=" . $_POST_['id'] . "") or $eh->show("0013");
+    $point_id1 = intval($_POST["lid"]);
+    $point_id2 = intval($_POST["lid2"]);
+    $map_id = intval($_POST["map_id"]);
+    $xoopsDB->query("update " . $xoopsDB->prefix("gmap_pl") . " set map_id='$map_id', point_id1='$point_id1', point_id2='$point_id2', active=2 where id=" . intval($_POST_['id']) . "") or $eh->show("0013");
     redirect_header("index.php", 1, _MD_DBUPDATED);
     exit();
 }
@@ -839,7 +839,7 @@ function pointOrderS()
 {
     global $xoopsDB, $myts, $eh;
 
-    $count_msg = $_POST["count"];
+    $count_msg = intval($_POST["count"]);
     for ($i = 0; $i < $count_msg; $i++) {
         $id = $_POST["id" . $i];
         $order = $_POST["order" . $i];

@@ -362,7 +362,7 @@ if (is_object($xoopsUser)) {
         $lon = floatval($_POST["lon"]);
         $zoom = intval($_POST["zoom"]);
         $html = $myts->addSlashes($myts->censorString($_POST["html"]));
-        $xoopsDB->query("update " . $xoopsDB->prefix("gmap_points") . " set map_id='$map_id', title='$title', lat='$lat', lon='$lon',zoom='$zoom',html='$html', status=2, date=" . time() . " where id=" . $_POST['lid'] . "") or $eh->show("0013");
+        $xoopsDB->query("update " . $xoopsDB->prefix("gmap_points") . " set map_id='$map_id', title='$title', lat='$lat', lon='$lon',zoom='$zoom',html='$html', status=2, date=" . time() . " where id=" . intval($_POST['lid']) . "") or $eh->show("0013");
         redirect_header("managepoint.php", 1, _MD_DBUPDATED);
         exit();
     }
