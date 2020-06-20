@@ -246,7 +246,7 @@ function modCat()
     $delete = new XoopsFormButton('', 'delete', _MD_DELETE, 'submit');
     $cancel = new XoopsFormButton('', 'cancel', _MD_CANCEL, 'button'); //This one will only be a button. no need to POST.
     $cancel->setExtra('onclick="location.href=\'main.php?op=catMod\'"');
-    $tray = new XoopsFormElementTray();
+    $tray = new XoopsFormElementTray("");
     $tray->addElement($modify);
     $tray->addElement($delete);
     $tray->addElement($cancel);
@@ -445,7 +445,7 @@ function modPoint()
     $form->addElement($select);
     $form->addElement(new XoopsFormHidden('lid', $id));
     $form->addElement(new XoopsFormHidden('fct', 'modPointS'));
-    $tray = new XoopsFormElementTray();
+    $tray = new XoopsFormElementTray("");
     $tray->addElement(new XoopsFormButton('', 'modify', _MD_MODIFY, 'submit'));
     $tray->addElement(new XoopsFormButton('', 'delete', _MD_DELETE, 'submit')); //delCat
     $cancel = new XoopsFormButton('', 'cancel', _MD_CANCEL, 'button');
