@@ -21,7 +21,6 @@
 #   ------------------------------------------------------------------------  #
 ###############################################################################
 
-
 defined("XOOPS_ROOT_PATH") or die("XOOPS root path not defined");
 
 $dirname = basename(dirname(dirname(__FILE__)));
@@ -36,17 +35,17 @@ $i = 0;
 // Index
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU0;
 $adminmenu[$i]['link'] = "admin/index.php";
-$adminmenu[$i]["icon"] = $pathIcon32.'/home.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/home.png';
 $i++;
 
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU2;
 $adminmenu[$i]['link'] = "admin/main.php?op=catAdd";
-$adminmenu[$i]["icon"] = $pathIcon32.'/category.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/category.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU3;
 $adminmenu[$i]['link'] = "admin/main.php?op=catMod";
-$adminmenu[$i]["icon"] = $pathIcon32.'/manage.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/manage.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU4;
@@ -56,29 +55,29 @@ $adminmenu[$i]["icon"] = './images/icons/32/categorysort.png';
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU5;
 $adminmenu[$i]['link'] = "admin/main.php?op=pointAdd";
-$adminmenu[$i]["icon"] = $pathIcon32.'/add.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/add.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU6;
 $adminmenu[$i]['link'] = "admin/main.php?op=pointMod";
-$adminmenu[$i]["icon"] = $pathIcon32.'/manage.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/manage.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU7;
 $adminmenu[$i]['link'] = "admin/main.php?op=pointOrder";
-$adminmenu[$i]["icon"] = $pathIcon32.'/compfile.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/compfile.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU8;
 $adminmenu[$i]['link'] = "admin/main.php?op=plAdd";
-$adminmenu[$i]["icon"] = $pathIcon32.'/add.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/add.png';
 
 $i++;
 $adminmenu[$i]['title'] = _MI_GMAPS_ADMENU9;
 $adminmenu[$i]['link'] = "admin/main.php?op=plMod";
-$adminmenu[$i]["icon"] = $pathIcon32.'/manage.png';
+$adminmenu[$i]["icon"] = $pathIcon32 . '/manage.png';
 
 $i++;
-$adminmenu[$i]['title'] =   _MI_GMAPS_ABOUT;
-$adminmenu[$i]['link'] =  "admin/about.php";
-$adminmenu[$i]["icon"] = $pathIcon32.'/about.png';
+$adminmenu[$i]['title'] = _MI_GMAPS_ABOUT;
+$adminmenu[$i]['link'] = "admin/about.php";
+$adminmenu[$i]["icon"] = $pathIcon32 . '/about.png';
