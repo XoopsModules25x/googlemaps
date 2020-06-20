@@ -16,7 +16,7 @@ $modversion['license'] = 'GNU GPL 2.0';
 $modversion['license_url'] = "www.gnu.org/licenses/gpl-2.0.html/";
 $modversion['official'] = 0;
 $modversion['image'] = "images/logo.png";
-$modversion['dirname'] = basename(dirname(__FILE__));//"googlemaps";
+$modversion['dirname'] = basename(dirname(__FILE__)); //"googlemaps";
 $modversion['dirmoduleadmin'] = '/Frameworks/moduleclasses/moduleadmin';
 $modversion['icons16'] = '../../Frameworks/moduleclasses/icons/16';
 $modversion['icons32'] = '../../Frameworks/moduleclasses/icons/32';
@@ -28,10 +28,10 @@ $modversion["release_date"] = "2013/01/11";
 $modversion["module_status"] = "Beta 1";
 $modversion["author_website_url"] = "http://www.xoops.org/";
 $modversion["author_website_name"] = "XOOPS";
-$modversion['min_php']='5.2';
-$modversion['min_xoops']='2.5.5';
-$modversion['min_admin']='1.1';
-$modversion['min_db']= array('mysql'=>'5.0.7', 'mysqli'=>'5.0.7');
+$modversion['min_php'] = '5.2';
+$modversion['min_xoops'] = '2.5.5';
+$modversion['min_admin'] = '1.1';
+$modversion['min_db'] = array('mysql' => '5.0.7', 'mysqli' => '5.0.7');
 
 // SQL
 $modversion['sqlfile']['mysql'] = "sql/mysql.sql";
@@ -90,7 +90,7 @@ $modversion['config'][3]['description'] = '_MI_GMAPS_MAPTYPEDSC';
 $modversion['config'][3]['formtype'] = 'select';
 $modversion['config'][3]['valuetype'] = 'text';
 $modversion['config'][3]['default'] = "Roadmap";
-$modversion['config'][3]['options'] = array('_MI_GMAPS_ROADMAP'=>'roadmap','_MI_GMAPS_TERRAIN'=>'terrain','_MI_GMAPS_HYBRID'=>'hybrid','_MI_GMAPS_SAT'=>'satellite');
+$modversion['config'][3]['options'] = array('_MI_GMAPS_ROADMAP' => 'roadmap', '_MI_GMAPS_TERRAIN' => 'terrain', '_MI_GMAPS_HYBRID' => 'hybrid', '_MI_GMAPS_SAT' => 'satellite');
 
 $modversion['config'][4]['name'] = 'map_width';
 $modversion['config'][4]['title'] = '_MI_GMAPS_MAPWIDTH';
@@ -147,4 +147,4 @@ $modversion['config'][11]['title'] = '_MI_GMAPS_HEADER';
 $modversion['config'][11]['description'] = '_MI_GMAPS_HEADERDSC';
 $modversion['config'][11]['formtype'] = 'textarea';
 $modversion['config'][11]['valuetype'] = 'text';
-$modversion['config'][11]['default'] =  _MI_INSTRUCTIONS ;
+$modversion['config'][11]['default'] = _MI_INSTRUCTIONS;

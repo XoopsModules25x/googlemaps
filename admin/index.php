@@ -26,13 +26,13 @@ $indexAdmin = new ModuleAdmin();
 
 //-----------------------
 
-$result=$xoopsDB->query("select count(*) from ".$xoopsDB->prefix("gmap_points"));
+$result = $xoopsDB->query("select count(*) from " . $xoopsDB->prefix("gmap_points"));
 list($numrows) = $xoopsDB->fetchRow($result);
 
 $indexAdmin->addInfoBox(_MD_GMAPS_DASHBOARD);
 
 $indexAdmin->addInfoBoxLine(
-    _MD_GMAPS_DASHBOARD, _MD_THEREARE , $numrows, 'Green'
+    _MD_GMAPS_DASHBOARD, _MD_THEREARE, $numrows, 'Green'
 );
 //----------------------------
 echo $indexAdmin->addNavigation('index.php');
